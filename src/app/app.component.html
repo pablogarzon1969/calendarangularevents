@@ -1,0 +1,60 @@
+
+  <div class="row text-center">
+    <div class="col-md-4">
+      <div class="btn-group">
+        <div class="btn btn-primary" (click)="decrement()">
+          Previous
+        </div>
+        <div class="btn btn-default" (click)="today()">
+          Today
+        </div>
+        <div class="btn btn-primary" (click)="increment()">
+          Next
+        </div>
+      </div>
+    </div>
+  <div class="col-md-4">
+    <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+  </div>
+  <div class="col-md-4">
+    <div class="btn-group">
+      <div class="btn btn-primary" (click)="view = 'month'" [class.active]="view === 'month'">Month</div>
+      <div class="btn btn-primary" (click)="view = 'week'" [class.active]="view === 'week'">Week</div>
+      <div class="btn btn-primary" (click)="view = 'day'" [class.active]="view === 'day'">Day</div>
+    </div>
+  </div>
+  <br>
+  <br>
+
+
+  <div [ngSwitch]="view">
+    <mwl-calendar-month-view [viewDate]="viewDate" [events]="events"  (dayClicked)="dayClicked($event.day)">
+    </mwl-calendar-month-view>
+    <mwl-calendar-week-view *ngSwitchCase="'week'" [viewDate]="viewDate" [events]="events">
+    </mwl-calendar-week-view>
+    <mwl-calendar-day-view *ngSwitchCase="'day'" [viewDate]="viewDate" [events]="events">
+    </mwl-calendar-day-view>
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>bsValue property sets initial state in this example</p>
+<div class="row">
+  <div class="col-xs-12 col-12 col-md-4 form-group">
+    <input type="text" class="form-control" #dp="bsDatepicker" bsDatepicker [bsValue]="bsValue">
+  </div>
+  <div class="col-xs-12 col-12 col-md-3 form-group">
+    <button class="btn btn-success" (click)="dp.toggle()">Date Picker</button>
+  </div>
+</div>
