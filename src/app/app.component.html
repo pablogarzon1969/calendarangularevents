@@ -1,6 +1,7 @@
-
+<fieldset>
+  <legend>Calendario</legend>
   <div class="row text-center">
-    <div class="col-md-4">
+
       <div class="btn-group">
         <div class="btn btn-primary" (click)="decrement()">
           Previous
@@ -11,41 +12,33 @@
         <div class="btn btn-primary" (click)="increment()">
           Next
         </div>
-      </div>
+
     </div>
-  <div class="col-md-4">
-    <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+  <div class="col-md-6">
+    <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'co' }}</h3>
   </div>
-  <div class="col-md-4">
+
     <div class="btn-group">
       <div class="btn btn-primary" (click)="view = 'month'" [class.active]="view === 'month'">Month</div>
       <div class="btn btn-primary" (click)="view = 'week'" [class.active]="view === 'week'">Week</div>
       <div class="btn btn-primary" (click)="view = 'day'" [class.active]="view === 'day'">Day</div>
     </div>
-  </div>
+
   <br>
   <br>
 
 
-  <div [ngSwitch]="view">
-    <mwl-calendar-month-view [viewDate]="viewDate" [events]="events"  (dayClicked)="dayClicked($event.day)">
+  <div [ngSwitch]="view" class="col-md-3">
+    <mwl-calendar-month-view [viewDate]="viewDate"  [locale]="locale" [events]="events"  (dayClicked)="dayClicked($event.day)">
     </mwl-calendar-month-view>
-    <mwl-calendar-week-view *ngSwitchCase="'week'" [viewDate]="viewDate" [events]="events">
+    <mwl-calendar-week-view  *ngSwitchCase="'week'"  [locale]="locale" [viewDate]="viewDate" [events]="events">
     </mwl-calendar-week-view>
-    <mwl-calendar-day-view *ngSwitchCase="'day'" [viewDate]="viewDate" [events]="events">
+    <mwl-calendar-day-view  *ngSwitchCase="'day'"  [locale]="locale" [viewDate]="viewDate" [events]="events">
     </mwl-calendar-day-view>
 
   </div>
-
-
-
-
-
-
-
-
-
-
+</div>
+</fieldset>
 
 
 

@@ -17,9 +17,11 @@ import { Subject } from 'rxjs/Subject';
 //import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   CalendarEvent,
+  CalendarDateFormatter,
   CalendarEventAction,
   CalendarEventTimesChangedEvent
 } from 'angular-calendar';
+import { CustomDateFormatter } from '../app/CustomDateFormatter'
 
 const colors: any = {
   red: {
@@ -44,10 +46,16 @@ import '../../node_modules/ngx-bootstrap/datepicker/bs-datepicker.css';
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  providers: [
+    {
+      provide: CalendarDateFormatter,
+      useClass: CustomDateFormatter
+    }
+  ]
 })
 export class AppComponent implements OnInit {
-
+  locale: string = 'co';
   view: string = 'month';
   viewDate: Date = new Date();
   /*viewDate: Date = new Date();
@@ -179,10 +187,10 @@ export class AppComponent implements OnInit {
   ];*/
 
 
-  dateString: string = '2018-03-19T05:00:00.000Z';
+  dateString: string = '2018-03-22T05:00:00.000Z';
   newDateFirst = new Date(this.dateString);
 
-  dateStringDos: string = '2018-03-22T05:00:00.000Z';
+  dateStringDos: string = '2018-03-23T05:00:00.000Z';
   newDateFirstDos = new Date(this.dateStringDos);
 
   
@@ -192,7 +200,7 @@ export class AppComponent implements OnInit {
     start: startOfDay(this.newDateFirst),
     end: startOfDay(this.newDateFirst),
     title: 'Fin de semestre',
-    color: colors.yellow
+    color: colors.blue
    }
    ,
    {
