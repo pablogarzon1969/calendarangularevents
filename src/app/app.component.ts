@@ -1,4 +1,12 @@
-import { Component, OnInit, ChangeDetectionStrategy, ViewChild, TemplateRef,ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  ViewEncapsulation
+} from '@angular/core';
+import { CalendarEvent,CalendarDateFormatter,
+  CalendarEventAction,
+  CalendarEventTimesChangedEvent, CalendarMonthViewDay } from 'angular-calendar';
+import { Subject } from 'rxjs/Subject';
 import {
   startOfDay,
   endOfDay,
@@ -13,38 +21,21 @@ import {
   addWeeks,
   addMonths
 } from 'date-fns';
-import { Subject } from 'rxjs/Subject';
-//import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {
-  CalendarEvent,
-  CalendarDateFormatter,
-  CalendarEventAction,
-  CalendarEventTimesChangedEvent
-} from 'angular-calendar';
 import { CustomDateFormatter } from '../app/CustomDateFormatter'
 
-const colors: any = {
-  red: {
-    primary: '#ad2121',
-    secondary: '#FAE3E3'
-  },
-  blue: {
-    primary: '#1e90ff',
-    secondary: '#D1E8FF'
-  },
-  yellow: {
-    primary: '#e3bc08',
-    secondary: '#FDF1BA'
-  }
-};
-
-
-import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
-import '../../node_modules/ngx-bootstrap/datepicker/bs-datepicker.css';
+const RED_CELL: 'red-cell' = 'red-cell';
+const BLUE_CELL: 'blue-cell' = 'blue-cell';
+const PINK_CELL: 'pink-cell' = 'pink-cell';
+const YELLOW_CELL: 'yellow_cell' = 'yellow_cell';
+const GREY_CELL: 'grey-cell' = 'grey-cell';
+const AQUAMARINE_CELL: 'aquamarine-cell' = 'aquamarine-cell';
+const DOGGERBLUE_CELL: 'dodgerblue-cell' = 'dodgerblue-cell';
+const WHITE_CELL: 'white-cell' = 'white-cell';
 
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   providers: [
@@ -54,35 +45,36 @@ import '../../node_modules/ngx-bootstrap/datepicker/bs-datepicker.css';
     }
   ]
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
+  clickedDate: Date;
   locale: string = 'co';
   view: string = 'month';
+
   viewDate: Date = new Date();
-  /*viewDate: Date = new Date();
-  events = [];*/
   bsValue = new Date();
   bsRangeValue: Date[];
   maxDate = new Date();
+
+  events: CalendarEvent[] = [];
+  activeDayIsOpen: boolean = true;
+  refresh: Subject<any> = new Subject();
+
+  cssClass: string = PINK_CELL;
+  cssClassSecond: string= YELLOW_CELL;
+  cssClassThird: string= WHITE_CELL;
+
   ngOnInit() {
     this.maxDate.setDate(this.maxDate.getDate() + 7);
     this.bsRangeValue = [this.bsValue, this.maxDate];
   }
 
-  activeDayIsOpen: boolean = true;
-  refresh: Subject<any> = new Subject();
-  constructor() { }
+  refreshView(): void {
+    this.cssClass = PINK_CELL ;
+    this.cssClassSecond =  YELLOW_CELL;
+    this.cssClassThird= WHITE_CELL;
+    this.refresh.next();
+  }
 
-  /*dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
-    if (isSameMonth(date, this.viewDate)) {
-      if (
-        (isSameDay(this.viewDate, date)) ||
-        events.length === 0
-      ) {
-      } else {
-        this.viewDate = date;
-      }
-    }
-  }*/
 
   dayClicked({date, events}: {date: Date, events: CalendarEvent[]}): void {
 
@@ -128,99 +120,33 @@ export class AppComponent implements OnInit {
   }
 
 
+  beforeMonthViewRender({ body }: { body: CalendarMonthViewDay[] }): void {
+    debugger;
+    body.forEach(day => {
+     /* if (day.date.getDate() % 2 === 1) {
+        day.cssClass = this.cssClass;
+      }*/
 
-  handleEvent(action: string, event: CalendarEvent): void {
-    //this.modalData = { event, action };
-   // this.modal.open(this.modalContent, { size: 'lg' });
+      debugger;
+      if (day.date.getDate()==30 && day.date.getMonth()+1==3)
+      {
+        day.cssClass = this.cssClass;
+      }
+      else if  (day.date.getDate()==2 && day.date.getMonth()+1==3)
+      {
+        day.cssClass = this.cssClassSecond;
+
+      }
+
+      else if  (day.date.getDate()==8 && day.date.getMonth()+1==3)
+      {
+        day.cssClass = this.cssClass;
+
+      }
+      else
+      {
+        day.cssClass =this.cssClassThird;
+      }
+    });
   }
-
-  actions: CalendarEventAction[] = [
-    {
-      label: '<i class="fa fa-fw fa-pencil"></i>',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        //this.handleEvent('Edited', event);
-      }
-    },
-    {
-      label: '<i class="fa fa-fw fa-times"></i>',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.events = this.events.filter(iEvent => iEvent !== event);
-        //this.handleEvent('Deleted', event);
-      }
-    }
-  ];
-
-  /*events: CalendarEvent[] = [
-    {
-      start: subDays(startOfDay(this.newDateFirst),1),
-     end: addDays(this.newDateFirst, 1),
-      title: 'Primer dia evento',
-      color: colors.red,
-      actions: this.actions
-    },
-    {
-      start: startOfDay(this.newDateFirst),
-      title: 'An event with no end date',
-      color: colors.yellow,
-      actions: this.actions
-    }
-    ,
-    {
-      start: subDays(endOfMonth(this.newDateFirst), 3),
-      end: addDays(endOfMonth(this.newDateFirst), 3),
-      title: 'A long event that spans 2 months',
-      color: colors.blue
-    }
-    ,
-    {
-      start: addHours(startOfDay(this.newDateFirst), 2),
-      end: new Date(),
-      title: 'A draggable and resizable event',
-      color: colors.yellow,
-      actions: this.actions,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true
-      },
-      draggable: true
-    }
-  ];*/
-
-
-  dateString: string = '2018-03-22T05:00:00.000Z';
-  newDateFirst = new Date(this.dateString);
-
-  dateStringDos: string = '2018-03-23T05:00:00.000Z';
-  newDateFirstDos = new Date(this.dateStringDos);
-
-  
-
-  events: CalendarEvent[] = [
-   {
-    start: startOfDay(this.newDateFirst),
-    end: startOfDay(this.newDateFirst),
-    title: 'Fin de semestre',
-    color: colors.blue
-   }
-   ,
-   {
-    start: startOfDay(this.dateStringDos),
-    end: startOfDay(this.dateStringDos),
-    title: 'Entrega de Notas',
-    color: colors.red
-   }
-  ];
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
